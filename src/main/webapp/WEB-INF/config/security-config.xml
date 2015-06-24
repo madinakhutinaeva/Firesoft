@@ -6,10 +6,10 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
 		   http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
 		   http://www.springframework.org/schema/security
 		   http://www.springframework.org/schema/security/spring-security.xsd">
+ 
+<beans:bean id="myAuthenticationFailureHandler"
+        class="io.firesoft.controller.CustomAuthenticationFailureHandler" />
 
-		 
-
-	 
 
 <http use-expressions="true">
     <intercept-url pattern="/user.html" access="hasRole('ROLE_USER')"/>    
@@ -18,53 +18,20 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
   
   <form-login 
     login-page="/"
-    authentication-failure-url="/"
+    authentication-failure-handler-ref="myAuthenticationFailureHandler"
     username-parameter="username"
     password-parameter="password"/>
     <logout logout-success-url="/"/>
 </http>		
 
 <authentication-manager>
-<authentication-provider>
-	<user-service>
-	  <user name="admin" password="admin" authorities="ROLE_ADMIN, ROLE_USER" />
-	  <user name="user" password="user" authorities="ROLE_USER" />
-	</user-service>
-</authentication-provider>
-</authentication-manager>		 
-
-<!--  
-
-	
-
-<authentication-manager>
-    <authentication-provider> 
-    <password-encoder hash="bcrypt" /> 
-    <jdbc-user-service data-source-ref="dataSource"/>  
-     </authentication-provider>   
+	<authentication-provider>
+		<user-service>
+		  <user name="admin" password="admin" authorities="ROLE_ADMIN, ROLE_USER" />
+		  <user name="user" password="user" authorities="ROLE_USER" />
+		</user-service>
+	</authentication-provider>
 </authentication-manager>
-
-<http auto-config="true" disable-url-rewriting="false">
-    <intercept-url pattern="/login.html" access="isAnonymous()" />
-    <intercept-url pattern="/loggedout.html" access="isAnonymous()" />
-    <intercept-url pattern="/loginFailed.html" access="isAnonymous()" />
-    <intercept-url pattern="/**" access="hasRole('ROLE_USER')" />
-    
-    
-    
-  <form-login 
-    login-page="/login.html"
-    authentication-failure-url="/loginFailed.html"
-    default-target-url="/index.jsp" />
-    
-    <logout logout-url="/logout" 
-    logout-success-url="/loggedout.html"/>
-   
-</http>	
--->
-
-
-
 
 </beans:beans>
 

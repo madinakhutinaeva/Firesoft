@@ -9,6 +9,11 @@
   <url>http://maven.apache.org</url>
   <dependencies>
   
+	<dependency>
+		<groupId>net.sf.flexjson</groupId>
+		<artifactId>flexjson</artifactId>
+		<version>3.3</version>
+	</dependency>
 
   
   
