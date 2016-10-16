@@ -9,4 +9,6 @@ public interface PostService {
 	Post save (Post post);
 
 	List<Post> findAllPosts();
+	
+	void save(Post post, String name);
 }

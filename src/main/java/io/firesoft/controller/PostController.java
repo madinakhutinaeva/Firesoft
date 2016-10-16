@@ -7,6 +7,8 @@ import io.firesoft.service.PostService;
 import io.firesoft.service.ThemeService;
 
 
+
+import java.security.Principal;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -41,7 +43,7 @@ public class PostController {
 	}
 	
 	@RequestMapping(value="addPost", method = RequestMethod.POST)
-	public String updatePost(@Valid @ModelAttribute("post") Post post, BindingResult result){
+	public String updatePost(@Valid @ModelAttribute("post") Post post, BindingResult result, Principal principal){
 		
 		System.out.println("result has errors: " + result.hasErrors());
 		System.out.println("post title: "+post.getTitle());
@@ -55,11 +57,15 @@ public class PostController {
 		}
 		
 		else {
-			postService.save(post);
+			 String name = principal.getName();
+			 postService.save(post, name);		 
+			//postService.save(post);
 		}
 		return "redirect:/";
 	}
 	
+	
+	 
 	@RequestMapping(value = "/themes", method = RequestMethod.GET)
 	public @ResponseBody List<Themes> findALLThemes() {
 	

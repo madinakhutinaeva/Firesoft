@@ -1,7 +1,10 @@
 package io.firesoft.model;
 
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -44,7 +47,7 @@ public class Post {
 	
 	
     @Column(name = "POSTAT")
-    private Date postDate;
+    private String postDate;
 
     @ManyToOne
     @JoinColumn(name="user_id")
@@ -61,19 +64,21 @@ public class Post {
 	}
 
 
-	public void setPostDate(Date postDate) {
+	public void setPostDate(String postDate) {
 		this.postDate = postDate;
 	}
 
 
-	public Date getPostDate() {
+	public String getPostDate() {
 	return postDate;
 }
 
 	
 public void setPostDate() {
-	postDate=new Date();
-	
+	Date date =new Date();
+	DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy, HH:mm:ss");
+	dateFormat.setTimeZone(TimeZone.getTimeZone("GMT+3:00"));
+	postDate = dateFormat.format(date);
 }
 
 	public String getThemes() {

@@ -1,3 +1,7 @@
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+    
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
@@ -7,14 +11,16 @@
 
 
 <head>
- 
- <script src="<c:url value="/resources/js/jquery-2.1.4.min.js" />"></script>
- <script src="<c:url value='/resources/js/jquery.leanModal.min.js' />"></script>
- <script src="<c:url value='/resources/js/jquery.form.min.js'  />"></script>
- <script src="<c:url value='/resources/js/jquery.simplemodal.js' />"></script>
- <script src="resources/js/bootstrap.js"></script>
- 
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script src="<c:url value="/resources/js/jquery-2.1.4.min.js" />"></script>
+<script src="<c:url value='/resources/js/jquery.leanModal.min.js' />"></script>
+<script src="<c:url value='/resources/js/jquery.form.min.js'  />"></script>
+<script src="<c:url value='/resources/js/jquery.simplemodal.js' />"></script>
+<script src="resources/js/bootstrap.js"></script>
+
  <script src="https://apis.google.com/js/platform.js" async defer></script>
+ <script src="https://apis.google.com/js/api:client.js"></script>
+ 
  <meta name="google-signin-client_id" content="46727822461-4ljlensngrf1r741kn9jvlaenrdkf8jk.apps.googleusercontent.com">
  
  <style>
@@ -30,7 +36,11 @@
 
 .popupContainer{
    top: 50px
+   
+   
 }
+
+
 </style>
 
 <link href="<c:url value="/resources/css/style.css" />" rel="stylesheet">
@@ -140,7 +150,9 @@ function onSignIn(googleUser) {
         
       };
       var v = document.getElementsByClassName("social_login")
-      xhr.setRequestHeader('X-CSRF-Token', v[0].children._csrf.value);
+      if (v[0].children._csrf) {
+    	  xhr.setRequestHeader('X-CSRF-Token', v[0].children._csrf.value);
+      }
       var data = 'password=' + id_token;
       data += '&username=' + profile.getEmail();
       xhr.send(data);
@@ -155,6 +167,30 @@ function signOut() {
 }
 
 
+function attachSignin(element) {
+    console.log(element.id);
+    auth2.attachClickHandler(element, {}, onSignIn, function(error) {
+          alert(JSON.stringify(error, undefined, 2));
+        });
+  }
+
+
+var googleUser = {};
+var startApp = function() {
+  gapi.load('auth2', function(){
+    // Retrieve the singleton for the GoogleAuth library and set up the client.
+    auth2 = gapi.auth2.init({
+      client_id: '46727822461-4ljlensngrf1r741kn9jvlaenrdkf8jk.apps.googleusercontent.com',
+      cookiepolicy: 'single_host_origin',
+      // Request scopes in addition to 'profile' and 'email'
+      //scope: 'additional_scope'
+    });
+    attachSignin(document.getElementById('my-signin'));
+  });
+};
+
+// todo: send user name on login
+startApp();
 </script>
 
 
@@ -184,6 +220,7 @@ function signOut() {
 		<section class="popupBody">
 			<!-- Social Login -->
 			<div class="social_login">
+
 				<div class="">
 					<a href="#" class="social_box fb">
 						<span class="icon"><i class="fa fa-facebook"></i></span>
@@ -191,8 +228,8 @@ function signOut() {
 						
 					</a>
 
-					<a href="#" class="social_box google">
-					    <div class="g-signin2" data-onsuccess="onSignIn"></div>
+					<a href="#" class="social_box google" id="my-signin">
+					    <!--  div class="g-signin2" data-onsuccess="onSignIn"></div>-->
 						<span class="icon"><i class="fa fa-google-plus"></i></span>
 						<span class="icon_title">Login with Google</span>
 					</a>
@@ -267,16 +304,6 @@ function signOut() {
 				</form>
 
 
-
-				<script>
-					function submitForm() {
-
-						$('#ff').submit();
-					}
-				</script>
-
-
-
 				<a href="#" class="forgot_password">Forgot password?</a>
 
 
@@ -286,6 +313,10 @@ function signOut() {
 			<!-- Register Form -->
 		
 				<form:form  modelAttribute="user" method="POST" cssClass="user_register">
+				
+				<c:if test="${param.success eq true }">
+				    <div class="alert alert-success">Registration successfull!</div>
+				</c:if>
 					<label>Full Name</label>
 					<input name="fullName"  type="text" />
 					<br />
@@ -316,6 +347,9 @@ function signOut() {
 			
 		</section>
 	</div>
+
+    
+
 	<p style="color: red">
 		<%
 			if (request.getParameter("error") != null) {
@@ -358,148 +392,77 @@ function signOut() {
 				xhr.setRequestHeader('X-CSRF-Token', csrf_token);
 			}
 		});
-
-		$('#ff')
-				.ajaxForm(
-						{
-							success : function(response, statusText, xhr, $form) {
-								console.log(response);
-								if (response == null) {
-									alert("authentication failure");
-								} else {
-									document.open();
-									document.write(response);
-									document.close();
-								}
-							},
-							error : function(response, statusText, error, $form) {
-								if (response != null && response.status == 401) {
-									document.getElementById("error_login").textContent = "wrong credentials";
-								}
-							}
-						});
-
-		// attach handler to form's submit event
-		$('#ff').submit(function() {
-			// submit the form
-			$(this).ajaxSubmit();
-			// return false to prevent normal browser submit and page navigation
-			return false;
-		});
-
-		function submitForm() {
-			$('#ff').submit();
-		}
 	</script>
-	<div class="container">
-		<div class="row">
-			<div class="col-md-8">
-				<div class="main-col">
-					<div class="block">
-						<div class="hero-unit">
+	
+		
+					<div class="block" style="text-align: right">
+						<div class="hero-unit" >
 							<div>
 							  <sec:authorize access="isAuthenticated()">
 								<h4>
-									Welcome to Firesoft.io
-									<sec:authentication property="name" />
-									!
+									Welcome to Firesoft.io <sec:authentication property="principal.user.fullName" />
+									!    
+				 				
+									
+									
 								</h4>
 								</sec:authorize>
+								
+								
 							</div>
-							<sec:authorize access="isAuthenticated()">
-								<a class="btn btn-primary" href="addPost.html">Add new post
-									»</a>
-							</sec:authorize>
+							
 							<sec:authorize access="hasRole('ROLE_ADMIN')">
 								<a class="btn btn-primary" href="EditPost.html">Edit new
-									post»</a>
+									postÂ»</a>
 							</sec:authorize>
 
 						</div>
 
+                     <c:if test="${param.success eq true }">
+				    <div class="alert alert-success">Registration successfull!</div>
+				</c:if>
 
-
-						<!--    <a class="btn" href="<spring:url value="/logout" />">
-         Logout ${pageContext.request.remoteUser}
-         </a>
-         <sec:csrfInput/>-->
-                       <sec:authorize access="isAuthenticated()">
-						<c:url var="logoutUrl" value="logout" />
-						<form action="${logoutUrl}" method="post" onSubmit="JavaScript:signOut()" >
-							<input class="btn btn-warning" type="submit" value="logout" />
-							<sec:csrfInput />
-						</form>
-					<!--
-						<div class="clearfix"></div>
-						<hr>
-						<ul id="topics">
-						</ul>
-						<h3>Statistics</h3>
-						  <ul>
-							<li>Total Number of Users: <strong>100</strong></li>
-							<li>Total Number of Posts: <strong>100</strong></li>
-							<li>Total Number of Categories: <strong>100</strong></li>
-						</ul> -->
-	</sec:authorize>
+					
+                       
 					</div>
-				</div>
-			</div>
+		
+	
 
-			<sec:authorize access="! isAuthenticated()">
-				<div class="col-md-4">
-					<div id="sidebar">
-						<div class="block">
-							<h3>Login Form</h3>
-							<form role="form">
-								<div class="form-group">
-									<label>Username</label> <input name="username" type="text"
-										class="form-control" placeholder="Enter Username">
-								</div>
-								<div class="form-group">
-									<label>Password</label> <input name="password" type="password"
-										class="form-control" placeholder="Enter Password">
-								</div>
-								<div class="checkbox">
-									<label> <input type="checkbox"> Check me out
-									</label>
-								</div>
-								<button name="submit" type="submit" class="btn btn-primary">Login</button>
-								<a class="btn btn-default" href="register.html">Create
-									account</a>
-							</form>
-						</div>
-						<div class="block">
-							<h3>Categories</h3>
-							<a href="#" class="list-group-item active">All Topics<span
-								class="badge pull-right">14</span></a>
-						</div>
-					</div>
-				</div>
-			</sec:authorize>
-		</div>
-	</div>
-	<!-- /.container -->
+	
 
-	<c:forEach items="${posts}" var="post">
-		<table>
-			<tr>
-				<td>Title</td>
-				<td>${post.title}</td>
+	
+<!-- Tab panes -->
+  <div class="tab-content" id="post-style">
+      <c:forEach items="${posts}" var="post">
+    
+    <div role="tabpanel" class="tab-pane" id="post_${post.id}">
+    
+        <h2>${post.title}</h2>
+        <div>${post.content}</div>
+        <div>${post.postDate}</div>
+    
+    	
+    </div>
+    </c:forEach>
+  </div>
+  
+  	<br /> <br />
+  	
+  	<script type="text/javascript">
+  	$(document).ready(function(){
+  		$('.nav-pills a:last').tab('show');
+  		
+  	});
+  	</script>
+	
+		<ul class="nav nav-pills" role="tablist">
+		<c:forEach items="${posts}" var="post" varStatus="loop">
+		<li role="presentation"><a href="#post_${post.id}" aria-controls="profile" role="tab" data-toggle="tab">${loop.index+1}</a></li>
+		</c:forEach>
 
-			</tr>
+  </ul>
 
-			<tr>
-				<td>---------------------</td>
-				<td>----------------------</td>
-			</tr>
-			<tr>
-				<td>Content</td>
-				<td>${post.content}</td>
-			</tr>
-
-		</table>
-
-	</c:forEach>
+  
 </body>
 </html>
 

@@ -5,6 +5,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <script src="<c:url value="/resources/js/jquery-2.1.4.min.js" />"></script>
     <link href="<c:url value="/resources/css/main.css" />" rel="stylesheet">
     <title>File Upload</title>

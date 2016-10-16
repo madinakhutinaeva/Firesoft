@@ -14,35 +14,40 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
 
 <beans:bean id="GoogleAuthProvider" class="io.firesoft.controller.GoogleAuthProvider"/> 
 
+<beans:bean id="sampleUserDetailsService" class="io.firesoft.service.SampleUserDetailsService">
+<beans:property name="dataSource"  ref="dataSource"/>
+<beans:property name="usersByUsernameQuery" value="select fullName, username,password,enabled from usersReg where username=?" />
+<beans:property name="authoritiesByUsernameQuery" value="select usersReg.username, role.name from usersReg 
+	join usersReg_role on usersReg.user_id=usersReg_role.user_user_id 
+	join role on usersReg_role.roles_id=role.id where usersReg.username=?"></beans:property>
+</beans:bean>
+
 <http use-expressions="true">
     <intercept-url pattern="/users.html" access="hasRole('ROLE_ADMIN')"/> 
     <intercept-url pattern="/users**" access="hasRole('ROLE_ADMIN')"/> 
     <intercept-url pattern="/users/**" access="hasRole('ROLE_ADMIN')"/>    
     <intercept-url pattern="/admin.html" access="hasRole('ROLE_ADMIN')"/>
-    <intercept-url pattern="/addPost.html" access="hasRole('ROLE_USER')"/>
-    <intercept-url pattern="/upload" access="hasRole('ROLE_USER')"/>
+    <intercept-url pattern="/addPost.html" access="hasRole('ROLE_USER')  or hasRole('ROLE_ADMIN')"/>
+    <intercept-url pattern="/upload" access="hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')"/>
+       <intercept-url pattern="/account**" access="hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')"/>
+  
   <form-login 
-    login-page="/"
+    login-page="/login"
     authentication-failure-handler-ref="myAuthenticationFailureHandler"
     authentication-failure-url="/?error" 
  
     username-parameter="username"
     password-parameter="password"/>
     <logout logout-success-url="/"/>
-    <csrf disabled="false"/>
+    <csrf disabled="true"/>
     
 </http>		
 
 <authentication-manager>
-<authentication-provider>
+<authentication-provider user-service-ref="sampleUserDetailsService">
+ 
     <password-encoder hash="bcrypt" />
-	<jdbc-user-service data-source-ref="dataSource"
-	authorities-by-username-query="select usersReg.username, role.name from usersReg 
-	join usersReg_role on usersReg.user_id=usersReg_role.user_user_id 
-	join role on usersReg_role.roles_id=role.id where usersReg.username=?"
-	users-by-username-query="select username,password,enabled from usersReg where username=?"
-	/>
-	
+    
 </authentication-provider>
 
 <authentication-provider ref="GoogleAuthProvider"/>

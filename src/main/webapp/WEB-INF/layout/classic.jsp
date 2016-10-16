@@ -64,15 +64,13 @@
 						<li><a href='<spring:url value="/addPost.html" />'>Add post</a></li>
 					</sec:authorize>
 					<sec:authorize access="! isAuthenticated()">
-						<li><a id="modal_trigger" style="margin-right: 600px" href="#modal">Login or register</a></li>
-					</sec:authorize>
-					<sec:authorize access="! isAuthenticated()">
-						<li><a href='<spring:url value="/register.html" />'>register</a></li>
-					</sec:authorize>
+						<li><a id="modal_trigger" style="margin-left: 2px" href="#modal">Login or register</a></li>
+					</sec:authorize>				
 					<sec:authorize access="isAuthenticated()">
+					    <li><a href='<spring:url value="/account.html" />'>My account</a></li>
 						<li><c:url var="logoutUrl" value="logout" />
 							<form style="margin-left: 15px; margin-top: 15px " action="${logoutUrl}"
-								method="post">
+								method="post" onSubmit="JavaScript:signOut()">
 								<a id="logoutBut" class="navbar-inverse nav a navbar-nav"
 									href="<spring:url value="/logout" />">Logout</a>
 								<sec:csrfInput />

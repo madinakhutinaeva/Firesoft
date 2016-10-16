@@ -71,23 +71,38 @@ public class UserService {
         	return result;
 	}
 
-	@Transactional
-	public User findOneWithPosts(int id) {
-		User user = findOne(id);
-		List<Post> posts = postRepository.findByUser(user, new PageRequest(0, 10, Direction.DESC, "title"));
-		user.setPosts(posts);
-	    return user;
-	}
+    @Transactional
+    public User findOneWithPosts(int id) {
+        User user = findOne(id);
+        List<Post> posts = postRepository.findByUser(user, new PageRequest(0, 10, Direction.DESC, "title"));
+        user.setPosts(posts);
+        return user;
+    }
 
-	public void save(User user) {
-		user.setEnabled(true);
-		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-		user.setPassword(encoder.encode(user.getPassword()));
+    public void save(User user) {
+        user.setEnabled(true);
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        user.setPassword(encoder.encode(user.getPassword()));
+        
+        
+        List<Role> roles = new ArrayList<Role>();
+        roles.add(roleRepository.findByName("ROLE_USER"));
+        user.setRoles(roles);
+        userRepository.save(user);
+    }
+    
+    public User findOneWithPosts(String  name) {
+        User user = userRepository.findByUsername(name);
+        return findOneWithPosts(user.getId());
+    }
 
+    public User findByName(String name) {
+        
+        return userRepository.findByUsername(name);
+    }
 
-		List<Role> roles = new ArrayList<Role>();
-		roles.add(roleRepository.findByName("ROLE_USER"));
-	    user.setRoles(roles);
-		userRepository.save(user);
-	}
+    public void delete(int id) {
+        userRepository.delete(id);
+        
+    }
 }

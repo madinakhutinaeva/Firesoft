@@ -17,6 +17,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
@@ -27,6 +29,7 @@ import com.google.api.client.json.gson.GsonFactory;
 
 import io.firesoft.model.RegistrationType;
 import io.firesoft.model.User;
+import io.firesoft.service.SampleUserDetailsService;
 import io.firesoft.service.UserService;
 
 @Component
@@ -39,6 +42,10 @@ public class GoogleAuthProvider implements AuthenticationProvider {
 
     @Autowired
     UserService userService;
+    
+    @Autowired
+    UserDetailsService detailsService;
+    
 
     @Override
     public Authentication authenticate(Authentication authentication)
@@ -72,17 +79,19 @@ public class GoogleAuthProvider implements AuthenticationProvider {
             // todo: send password to user
             user.setPassword(password);
             user.setUsername(userInfo.email);
+            user.setFullName(userInfo.email);
             userService.save(user);
+            UserDetails userDetails = detailsService.loadUserByUsername(user.getUsername());
             grantedAuths.add(new SimpleGrantedAuthority("ROLE_USER"));
-            result = new UsernamePasswordAuthenticationToken(user, token, grantedAuths);
-            result.setDetails(user);
+            result = new UsernamePasswordAuthenticationToken(userDetails, token, grantedAuths);
+            result.setDetails(userDetails);
             return result;
         }
         // todo: use user.getRoles()
-        
+        UserDetails userDetails = detailsService.loadUserByUsername(user.getUsername());
         grantedAuths.add(new SimpleGrantedAuthority("ROLE_USER"));
-        result = new UsernamePasswordAuthenticationToken(user, token, grantedAuths);
-        result.setDetails(user);
+        result = new UsernamePasswordAuthenticationToken(userDetails, token, grantedAuths);
+        result.setDetails(userDetails);
         return result;
     }
 

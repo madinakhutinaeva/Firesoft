@@ -5,3 +5,15 @@ body {
   padding: 40px 15px;
   text-align: center;
 }
+
+#post-style  {
+	padding: 100px;
+	 background: #fc3; 
+    border: 2px solid black; 
+   
+}
+
+#post-style > div > h2 {
+	 text-align: center; 
+}
+ 
