@@ -26,8 +26,8 @@
     <intercept-url pattern="/users/**" access="hasRole('ROLE_ADMIN')"/>    
     <intercept-url pattern="/admin.html" access="hasRole('ROLE_ADMIN')"/>
     <intercept-url pattern="/addPost.html" access="hasRole('ROLE_ADMIN')"/>
-    <intercept-url pattern="/upload" access="hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')"/>
-       <intercept-url pattern="/account**" access="hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')"/>
+    <intercept-url pattern="/upload" access="hasRole('ROLE_ADMIN')"/>
+    <intercept-url pattern="/account**" access="hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')"/>
   
   <form-login 
     login-page="/login"

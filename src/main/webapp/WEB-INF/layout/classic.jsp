@@ -60,7 +60,8 @@
 					<sec:authorize access="hasRole('ROLE_ADMIN')">
 						<li><a href='<spring:url value="/users.html" />'>Users</a></li>
 					</sec:authorize>
-					<sec:authorize access="isAuthenticated()">					
+					<!-- temporary disable posting -->
+					<sec:authorize access="hasRole('ROLE_ADMIN')">					
 						<li><a href='<spring:url value="/addPost.html" />'>Add post</a></li>
 					</sec:authorize>
 					<sec:authorize access="! isAuthenticated()">

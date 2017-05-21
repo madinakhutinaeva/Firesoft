@@ -21,7 +21,7 @@
  <script src="https://apis.google.com/js/platform.js" async defer></script>
  <script src="https://apis.google.com/js/api:client.js"></script>
  
- <meta name="google-signin-client_id" content="46727822461-4ljlensngrf1r741kn9jvlaenrdkf8jk.apps.googleusercontent.com">
+ <meta name="google-signin-client_id" content=<spring:message code="google.client_id"/> >
  
  <style>
  
@@ -51,8 +51,6 @@
 
 <!-- Custom styles for this template -->
 <link href="resources/css/custom.css" rel="stylesheet">
-
-
 
 </head>
 <body>
@@ -181,7 +179,7 @@ var startApp = function() {
   gapi.load('auth2', function(){
     // Retrieve the singleton for the GoogleAuth library and set up the client.
     auth2 = gapi.auth2.init({
-      client_id: '46727822461-4ljlensngrf1r741kn9jvlaenrdkf8jk.apps.googleusercontent.com',
+      client_id: <spring:message code="google.client_id"/>,
       cookiepolicy: 'single_host_origin',
       // Request scopes in addition to 'profile' and 'email'
       //scope: 'additional_scope'

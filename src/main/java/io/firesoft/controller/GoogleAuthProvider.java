@@ -93,7 +93,9 @@ public class GoogleAuthProvider implements AuthenticationProvider {
         }
         // todo: use user.getRoles()
         UserDetails userDetails = detailsService.loadUserByUsername(user.getUsername());
-        grantedAuths.add(new SimpleGrantedAuthority("ROLE_USER"));
+        for(GrantedAuthority auto: userDetails.getAuthorities()){
+            grantedAuths.add(auto);
+        }
         result = new UsernamePasswordAuthenticationToken(userDetails, token, grantedAuths);
         result.setDetails(userDetails);
         return result;

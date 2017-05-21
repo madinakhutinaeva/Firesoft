@@ -30,7 +30,7 @@
     <property name="jpaPropertyMap">
         <map>
             <entry key="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect" />
-            <entry key="hibernate.hbm2ddl.auto" value="create" />
+            <entry key="hibernate.hbm2ddl.auto" value="update" />
             <entry key="hibernate.format_sql" value="true" />
              <entry key="hibernate.connection.charset" value="UTF-8" />
              <entry key="hibernate.connection.characterEncoding" value="utf8" /> 

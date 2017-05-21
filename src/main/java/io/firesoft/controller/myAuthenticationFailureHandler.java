@@ -14,9 +14,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 
 
-
-
-
 public class myAuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
     @Override
